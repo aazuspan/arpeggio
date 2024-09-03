@@ -1,0 +1,56 @@
+[build-system]
+requires = [ "hatchling",]
+build-backend = "hatchling.build"
+
+[project]
+name = "glissando"
+dynamic = [ "version",]
+description = ""
+readme = "README.md"
+requires-python = ">=3.10"
+keywords = []
+dependencies = [ "simpleaudio", "pydub",]
+[[project.authors]]
+name = "Aaron Zuspan"
+
+[project.license]
+file = "LICENSE"
+
+[project.urls]
+Homepage = "https://github.com/aazuspan/glissando"
+
+[tool.ruff]
+fix = true
+show-fixes = true
+
+[tool.hatch.version]
+path = "src/glissando/__init__.py"
+
+[tool.ruff.lint]
+select = [ "E", "I", "F", "B", "FA", "UP", "PT", "Q", "RET", "SIM", "PERF",]
+
+[tool.hatch.envs.default]
+dependencies = [ "pre-commit",]
+
+[tool.hatch.envs.test]
+dependencies = [ "pytest", "pytest-cov",]
+
+[tool.hatch.envs.docs]
+dependencies = [ "mkdocs", "mkdocs-material", "mkdocstrings[python]",]
+
+[tool.ruff.lint.isort]
+known-first-party = [ "glissando",]
+
+[tool.hatch.build.targets.wheel]
+packages = [ "src/glissando",]
+
+[tool.hatch.build.targets.sdist]
+include = [ "/src",]
+
+[tool.hatch.envs.test.scripts]
+all = "pytest . {args}"
+cov = "pytest . --cov=src/glissando {args}"
+
+[tool.hatch.envs.docs.scripts]
+serve = "mkdocs serve --config-file docs/mkdocs.yml"
+build = "mkdocs build --config-file docs/mkdocs.yml"
