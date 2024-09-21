@@ -1,5 +1,6 @@
 """Instruments for synthesizing signals from notes and chords."""
 
+import random
 from abc import ABC
 
 from pydub import AudioSegment
@@ -12,6 +13,9 @@ from pydub.generators import WhiteNoise as WhiteNoiseGenerator
 
 from .audio import normalized_overlay
 from .note import Chord, Note
+
+# Initialize the RNG to generate reproducible noise
+random.seed(42)
 
 
 class Instrument(ABC):

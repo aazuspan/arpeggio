@@ -78,6 +78,7 @@ class ToAst(Transformer):
             symbols *= repeat
 
         default_duration = Fraction(1, 16)
+        # TODO: Refactor this
         symbol_durations: list[list[Interval | Continue | Rest | Fraction]] = []
         for s in symbols:
             if isinstance(s, Continue):
