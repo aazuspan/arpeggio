@@ -10,3 +10,4 @@ repos:
     hooks:
       - id: mypy
         exclude: ^tests/
+        args: [--check-untyped-defs, --ignore-missing-imports]

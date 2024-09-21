@@ -5,18 +5,16 @@ from __future__ import annotations
 from pydub import AudioSegment
 from pydub.playback import play
 
+from .audio import normalized_overlay
 from .key import Key
 from .track import Track
 
 
 class Song:
-    def __init__(
-        self, key: Key, bpm: int = 120, sample_rate: int = 11025, bit_depth: int = 8
-    ):
+    def __init__(self, key: Key, bpm: int = 120, sample_rate: int = 11025):
         self.key = key
         self.bpm = bpm
         self.sample_rate = sample_rate
-        self.bit_depth = bit_depth
         self.tracks: list[Track] = []
 
     def __len__(self) -> int:
@@ -24,12 +22,11 @@ class Song:
         return max([len(track) for track in self.tracks])
 
     def render(self) -> AudioSegment:
-        segment = AudioSegment.silent(len(self))
+        unmuted_tracks = [track for track in self.tracks if not track.mute]
+        solo_tracks = [track for track in self.tracks if track.solo]
+        play_tracks = solo_tracks or unmuted_tracks
 
-        for track in self.tracks:
-            segment = segment.overlay(track.segment)
-
-        return segment
+        return normalized_overlay([track.segment for track in play_tracks])
 
     def play(self):
         """Play the song."""

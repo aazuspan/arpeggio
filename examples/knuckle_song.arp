@@ -1,0 +1,35 @@
+~ Knuckle Song
+
+@bpm 120
+@key F#_major
+
+track
+    @instrument sine
+    @volume -5
+    @pan 1
+    @octave 0
+
+    ~ Down melody
+    3+2+1+. 6 & 5 . [x3]
+    3 . 2 . . . 1 .
+
+    ~ Up melody
+    1 2 3 . 5 & 6 . [x3]
+    1+. 2+. . . 1+.
+end
+
+
+track
+    @instrument triangle
+    @volume 0
+    @pan 0
+    @octave -1
+    @chords
+
+    ~ Down melody
+    & & 1 & & & 1 & [x3]
+    & & 2 . . . 1 &
+
+    & & 1 & & & 1 & [x3]
+    & & 2 . . . 1 &
+end

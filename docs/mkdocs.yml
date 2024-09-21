@@ -1,7 +1,7 @@
 site_name: My Docs
 docs_dir: pages/
-repo_url: https://github.com/aazuspan/glissando
-repo_name: aazuspan/glissando
+repo_url: https://github.com/aazuspan/arpeggio
+repo_name: aazuspan/arpeggio
 
 nav:
   - Home: index.md

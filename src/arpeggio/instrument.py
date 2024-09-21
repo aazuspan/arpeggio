@@ -10,6 +10,7 @@ from pydub.generators import Square as SquareGenerator
 from pydub.generators import Triangle as TriangleGenerator
 from pydub.generators import WhiteNoise as WhiteNoiseGenerator
 
+from .audio import normalized_overlay
 from .note import Chord, Note
 
 
@@ -18,16 +19,16 @@ class Instrument(ABC):
 
     gen: type[SignalGenerator]
 
-    def __init__(self, sample_rate: int, bit_depth: int):
+    def __init__(self, sample_rate: int):
         self.sample_rate = sample_rate
-        self.bit_depth = bit_depth
+        self.bit_depth = 16
 
     def __call__(
-        self, playable: Note | Chord | None, duration: float = 250, volume: float = 0.0
+        self, playable: Note | Chord | None, duration: float, volume: float = 0.0
     ) -> AudioSegment:
         if playable is None:
             return self._play_rest(duration)
-        if isinstance(playable, Note):
+        if isinstance(playable, float):
             return self._play_note(playable, duration, volume=volume)
         if isinstance(playable, Chord):
             return self._play_chord(playable, duration, volume=volume)
@@ -38,16 +39,14 @@ class Instrument(ABC):
         self, note: Note, duration: float, volume: float = 0.0
     ) -> AudioSegment:
         return self.gen(
-            note.frequency, sample_rate=self.sample_rate, bit_depth=self.bit_depth
+            note, sample_rate=self.sample_rate, bit_depth=self.bit_depth
         ).to_audio_segment(duration, volume=volume)
 
     def _play_chord(
         self, chord: Chord, duration: float, volume: float = 0.0
     ) -> AudioSegment:
-        segment = AudioSegment.silent(duration)
-        for note in chord.notes:
-            segment = segment.overlay(self._play_note(note, duration, volume=volume))
-        return segment
+        segments = [self._play_note(note, duration, volume=volume) for note in chord]
+        return normalized_overlay(segments)
 
     def _play_rest(self, duration: float) -> AudioSegment:
         return AudioSegment.silent(duration)
@@ -76,4 +75,19 @@ class Noise(Instrument):
         self, note: Note, duration: float, volume: float = 0.0
     ) -> AudioSegment:
         # WhiteNoiseGenerator doesn't support frequency
-        return self.gen().to_audio_segment(duration, volume=volume)
+        return self.gen(
+            sample_rate=self.sample_rate, bit_depth=self.bit_depth
+        ).to_audio_segment(duration, volume=volume)
+
+
+instruments = {
+    "sine": Sine,
+    "triangle": Triangle,
+    "square": Square,
+    "sawtooth": Sawtooth,
+    "noise": Noise,
+}
+
+
+def get_instrument(name: str) -> type[Instrument]:
+    return {k.lower(): v for k, v in instruments.items()}[name.lower()]

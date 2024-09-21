@@ -3,13 +3,13 @@ requires = [ "hatchling",]
 build-backend = "hatchling.build"
 
 [project]
-name = "glissando"
+name = "arpeggio"
 dynamic = [ "version",]
 description = ""
 readme = "README.md"
 requires-python = ">=3.10"
 keywords = []
-dependencies = [ "simpleaudio", "pydub",]
+dependencies = [ "simpleaudio", "pydub", "lark", "numpy"]
 [[project.authors]]
 name = "Aaron Zuspan"
 
@@ -17,14 +17,17 @@ name = "Aaron Zuspan"
 file = "LICENSE"
 
 [project.urls]
-Homepage = "https://github.com/aazuspan/glissando"
+Homepage = "https://github.com/aazuspan/arpeggio"
+
+[project.scripts]
+arpeggio = "arpeggio.__main__:main"
 
 [tool.ruff]
 fix = true
 show-fixes = true
 
 [tool.hatch.version]
-path = "src/glissando/__init__.py"
+path = "src/arpeggio/__init__.py"
 
 [tool.ruff.lint]
 select = [ "E", "I", "F", "B", "FA", "UP", "PT", "Q", "RET", "SIM", "PERF",]
@@ -39,17 +42,17 @@ dependencies = [ "pytest", "pytest-cov",]
 dependencies = [ "mkdocs", "mkdocs-material", "mkdocstrings[python]",]
 
 [tool.ruff.lint.isort]
-known-first-party = [ "glissando",]
+known-first-party = [ "arpeggio",]
 
 [tool.hatch.build.targets.wheel]
-packages = [ "src/glissando",]
+packages = [ "src/arpeggio",]
 
 [tool.hatch.build.targets.sdist]
 include = [ "/src",]
 
 [tool.hatch.envs.test.scripts]
 all = "pytest . {args}"
-cov = "pytest . --cov=src/glissando {args}"
+cov = "pytest . --cov=src/arpeggio {args}"
 
 [tool.hatch.envs.docs.scripts]
 serve = "mkdocs serve --config-file docs/mkdocs.yml"
