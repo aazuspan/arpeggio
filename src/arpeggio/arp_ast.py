@@ -98,8 +98,13 @@ class ToAst(Transformer):
 
         return config
 
+    @v_args(inline=True)
+    def SIGNED_NUMBER(self, n) -> int | float:
+        if "." in n:
+            return float(n)
+        return int(n)
+
     INT = int
-    SIGNED_NUMBER = float
     WORD = NOTE_NAME = str
 
 

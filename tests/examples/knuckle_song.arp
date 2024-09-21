@@ -2,6 +2,7 @@
 
 @bpm 120
 @key F#_major
+@loop 2
 
 track
     @instrument sine
@@ -21,8 +22,6 @@ end
 
 track
     @instrument triangle
-    @volume 0
-    @pan 0
     @octave -1
     @chords
 

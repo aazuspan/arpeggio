@@ -2,20 +2,24 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass, field
+
 from pydub import AudioSegment
 from pydub.playback import play
 
 from .audio import normalized_overlay
+from .instrument import Instrument
 from .key import Key
 from .track import Track
 
 
+@dataclass
 class Song:
-    def __init__(self, key: Key, bpm: int = 120, sample_rate: int = 11025):
-        self.key = key
-        self.bpm = bpm
-        self.sample_rate = sample_rate
-        self.tracks: list[Track] = []
+    key: Key
+    bpm: int = 120
+    sample_rate: int = 11_025
+    tracks: list[Track] = field(default_factory=list)
+    loop: int = 1
 
     def __len__(self) -> int:
         """Length of the song in milliseconds."""
@@ -24,20 +28,21 @@ class Song:
     def render(self) -> AudioSegment:
         unmuted_tracks = [track for track in self.tracks if not track.mute]
         solo_tracks = [track for track in self.tracks if track.solo]
-        play_tracks = solo_tracks or unmuted_tracks
+        tracks = solo_tracks or unmuted_tracks
 
-        return normalized_overlay([track.segment for track in play_tracks])
+        if self.loop > 1:
+            return normalized_overlay([track.render() * self.loop for track in tracks])
+
+        return normalized_overlay([track.render() for track in tracks])
 
     def play(self):
         """Play the song."""
         play(self.render())
 
-    def add_track(self, instrument, **kwargs) -> Track:
+    def add_track(self, instrument: type[Instrument], **kwargs) -> Track:
         """Create a new track with the given instrument."""
-        track = Track(instrument, song=self, **kwargs)
+        track = Track(
+            instrument=instrument(sample_rate=self.sample_rate), song=self, **kwargs
+        )
         self.tracks.append(track)
         return track
-
-    def loop(self, n: int) -> None:
-        for track in self.tracks:
-            track.loop(n)
