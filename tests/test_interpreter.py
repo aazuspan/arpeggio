@@ -2,8 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from arpeggio.interpreter import interpret
-from arpeggio.parser import Parser
+import arpeggio
 
 from .conftest import EXAMPLE_SONGS
 
@@ -16,9 +15,9 @@ def original_datadir() -> Path:
 
 @pytest.mark.parametrize("source", EXAMPLE_SONGS.values(), ids=EXAMPLE_SONGS.keys())
 def test_interpret_example_songs(source: str, ndarrays_regression):
-    parser = Parser()
+    parser = arpeggio.parser.Parser()
     ast = parser.parse(source)
-    song = interpret(ast)
+    song = arpeggio.interpreter.interpret(ast)
 
     rendered = song.render()
     ndarrays_regression.check(

@@ -7,10 +7,10 @@ from dataclasses import dataclass, field
 from pydub import AudioSegment
 from pydub.playback import play
 
-from .audio import normalized_overlay
-from .instrument import Instrument
-from .key import Key
-from .track import Track
+from arpeggio.engine.audio import normalized_overlay
+from arpeggio.engine.instrument import Instrument
+from arpeggio.engine.key import Key
+from arpeggio.engine.track import Track
 
 
 @dataclass
@@ -29,6 +29,9 @@ class Song:
         unmuted_tracks = [track for track in self.tracks if not track.mute]
         solo_tracks = [track for track in self.tracks if track.solo]
         tracks = solo_tracks or unmuted_tracks
+
+        if not tracks:
+            return AudioSegment.silent(duration=1)
 
         if self.loop > 1:
             return normalized_overlay([track.render() * self.loop for track in tracks])

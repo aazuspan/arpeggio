@@ -1,6 +1,6 @@
 import pytest
 
-from arpeggio.parser import Parser
+import arpeggio
 
 
 def test_parse_valid_program():
@@ -24,7 +24,7 @@ def test_parse_valid_program():
         1 . . . . . . . [x4]
     end
     """
-    parser = Parser()
+    parser = arpeggio.parser.Parser()
     song = parser.parse(prog)
     assert song.config == {"bpm": 120, "key": "C#_Major"}
     assert len(song.tracks) == 2
@@ -38,7 +38,7 @@ def test_parse_valid_program():
 @pytest.mark.parametrize("source", ["", "~ comment"])
 def test_parse_empty_program(source):
     """An empty program should parse without errors."""
-    parser = Parser()
+    parser = arpeggio.parser.Parser()
     ast = parser.parse(source)
 
     assert not parser.diagnostics

@@ -4,12 +4,10 @@ from dataclasses import dataclass
 from lark import Transformer, ast_utils, v_args
 
 
-@dataclass
 class Continue(ast_utils.Ast):
     """A marker to continue the previous note."""
 
 
-@dataclass
 class Rest(ast_utils.Ast):
     """A marker to rest for a note."""
 
@@ -38,7 +36,7 @@ class Song(ast_utils.Ast):
     tracks: list[Track]
 
 
-class ToAst(Transformer):
+class _ToAst(Transformer):
     """Handler for other token types."""
 
     as_list = list
@@ -109,4 +107,4 @@ class ToAst(Transformer):
 
 
 def get_transformer():
-    return ast_utils.create_transformer(sys.modules[__name__], ToAst())
+    return ast_utils.create_transformer(sys.modules[__name__], _ToAst())

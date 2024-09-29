@@ -1,6 +1,6 @@
 import pytest
 
-from arpeggio import note
+from arpeggio.engine import note
 
 
 def test_duration_to_millis():

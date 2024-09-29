@@ -11,8 +11,8 @@ from pydub.generators import Square as SquareGenerator
 from pydub.generators import Triangle as TriangleGenerator
 from pydub.generators import WhiteNoise as WhiteNoiseGenerator
 
-from .audio import normalized_overlay
-from .note import Chord, Note
+from arpeggio.engine.audio import normalized_overlay
+from arpeggio.engine.note import Chord, Note
 
 # Initialize the RNG to generate reproducible noise
 random.seed(42)

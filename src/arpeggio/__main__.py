@@ -1,15 +1,15 @@
 import argparse
 
-from .interpreter import interpret
-from .parser import Parser
+from arpeggio.interpreter import interpret
+from arpeggio.parser import Parser
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
-        prog="arp", description="Interpret Arpeggio source code into audio."
+        prog="arpeggio", description="Interpret Arpeggio source code into audio."
     )
 
-    subparsers = parser.add_subparsers(title="commands")
+    subparsers = parser.add_subparsers(title="commands", required=True, dest="command")
 
     play_parser = subparsers.add_parser("play", help="Play an Arpeggio file")
     play_parser.add_argument("source", help="Arpeggio file to interpret")
@@ -18,17 +18,19 @@ def main():
         "compile", help="Compile an Arpeggio file to WAV"
     )
     compile_parser.add_argument("source", help="Arpeggio file to interpret")
-    compile_parser.add_argument("--output", help="Optional output file to write")
+    compile_parser.add_argument("output", help="Output file to write")
 
     args = parser.parse_args()
+
     with open(args.source) as f:
         source = f.read()
-
     ast = Parser().parse(source, wrap_errors=False)
     song = interpret(ast)
 
-    if getattr(args, "output", None):
-        raise NotImplementedError("Output to file not yet implemented")
+    if args.command == "compile":
+        song.render().export(args.output, format="wav")
+        print(f"Exported to {args.output}")
+        return
 
     song.play()
 

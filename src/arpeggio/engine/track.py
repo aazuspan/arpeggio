@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING
 
 from pydub import AudioSegment
 
-from .instrument import Instrument
-from .note import Chord, Duration, Note
+from arpeggio.engine.instrument import Instrument
+from arpeggio.engine.note import Chord, Duration, Note
 
 if TYPE_CHECKING:
     from .song import Song
