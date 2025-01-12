@@ -9,7 +9,7 @@ description = ""
 readme = "README.md"
 requires-python = ">=3.10"
 keywords = []
-dependencies = [ "simpleaudio", "pydub", "lark", "numpy"]
+dependencies = [ "simpleaudio", "pydub", "lark", "numpy", "watchdog" ]
 [[project.authors]]
 name = "Aaron Zuspan"
 
