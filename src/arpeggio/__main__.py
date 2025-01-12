@@ -5,7 +5,7 @@ from collections.abc import Callable
 from watchdog.events import FileModifiedEvent, FileSystemEventHandler
 from watchdog.observers import Observer
 
-from arpeggio.interpreter import interpret
+from arpeggio.interpreter import InterpreterError, interpret
 from arpeggio.parser import Parser, ParsingError
 
 
@@ -71,6 +71,7 @@ def _watch_file(path: str, *, callback: Callable[[], None]):
         while observer.is_alive():
             observer.join(1.0)
     except KeyboardInterrupt:
+        # TODO: If the thread is playing, just interrupt it instead of exiting.
         observer.stop()
         print("Exiting...")
     finally:
@@ -85,7 +86,7 @@ def _render_file(path: str, output: str | None = None):
     try:
         ast = Parser().parse(source, wrap_errors=True)
         song = interpret(ast)
-    except ParsingError as e:
+    except (ParsingError, InterpreterError) as e:
         print(e)
         return
 
