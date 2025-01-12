@@ -5,12 +5,31 @@ from __future__ import annotations
 from fractions import Fraction
 
 
-class Duration(Fraction):
+class Duration:
     """A note duration, in fractions of a whole note."""
+
+    def __init__(self, numerator: int, denominator: int):
+        self._fraction = Fraction(numerator, denominator)
 
     def to_millis(self, bpm: int, beats_per_measure: int = 4) -> float:
         """Return the number of milliseconds this note duration lasts."""
-        return float((60_000 * float(self) / bpm) * beats_per_measure)
+        return float((60_000 * float(self._fraction) / bpm) * beats_per_measure)
+
+    def __truediv__(self, other: int) -> Duration:
+        result = self._fraction / other
+        return Duration(result.numerator, result.denominator)
+
+    def __mul__(self, other: int) -> Duration:
+        result = self._fraction * other
+        return Duration(result.numerator, result.denominator)
+
+    def __add__(self, other: Duration) -> Duration:
+        result = self._fraction + other._fraction
+        return Duration(result.numerator, result.denominator)
+
+    def __sub__(self, other: Duration) -> Duration:
+        result = self._fraction - other._fraction
+        return Duration(result.numerator, result.denominator)
 
 
 WholeNote = Duration(1, 1)

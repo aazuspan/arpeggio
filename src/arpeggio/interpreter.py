@@ -39,12 +39,18 @@ def interpret(parsed: ast.Song) -> engine.Song:
         symbols = [s for line in track.lines for s in line]
         for symbol, duration in symbols:
             if isinstance(symbol, ast.Rest):
-                t.rest(duration=engine.note.Duration(duration))
+                t.rest(
+                    duration=engine.note.Duration(
+                        duration.numerator, duration.denominator
+                    )
+                )
             elif isinstance(symbol, ast.Interval):
                 t.play(
                     interval=symbol.value,
                     octave=symbol.octave,
-                    duration=engine.note.Duration(duration),
+                    duration=engine.note.Duration(
+                        duration.numerator, duration.denominator
+                    ),
                 )
 
     return song

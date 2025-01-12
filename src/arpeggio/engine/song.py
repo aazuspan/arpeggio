@@ -30,13 +30,11 @@ class Song:
         solo_tracks = [track for track in self.tracks if track.solo]
         tracks = solo_tracks or unmuted_tracks
 
-        if not tracks:
-            return AudioSegment.silent(duration=1)
-
+        rendered = normalized_overlay([track.render() for track in tracks])
         if self.loop > 1:
-            return normalized_overlay([track.render() * self.loop for track in tracks])
+            rendered *= self.loop
 
-        return normalized_overlay([track.render() for track in tracks])
+        return rendered
 
     def play(self):
         """Play the song."""

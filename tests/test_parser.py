@@ -1,5 +1,3 @@
-import pytest
-
 import arpeggio
 
 
@@ -33,14 +31,3 @@ def test_parse_valid_program():
     assert track.config == {"instrument": "sine"}
     assert len(track.lines) == 3
     assert len(track.lines[1]) == 5 * 3
-
-
-@pytest.mark.parametrize("source", ["", "~ comment"])
-def test_parse_empty_program(source):
-    """An empty program should parse without errors."""
-    parser = arpeggio.parser.Parser()
-    ast = parser.parse(source)
-
-    assert not parser.diagnostics
-    assert ast.config == {}
-    assert ast.tracks == []

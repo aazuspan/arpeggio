@@ -9,10 +9,18 @@ def normalized_overlay(segments: list[AudioSegment]) -> AudioSegment:
 
     This avoids clipping that otherwise occurs with AudioSegment.overlay. The output
     segment will have the same duration as the longest input segment.
+
+    If no segments are passed or all segments are empty, returns silence.
     """
-    max_segment_length = int(
-        max([len(segment._data) / segment.sample_width for segment in segments])
+    max_segment_length = (
+        int(max([len(segment._data) / segment.sample_width for segment in segments]))
+        if segments
+        else 0
     )
+
+    if max_segment_length == 0:
+        return AudioSegment.silent(0)
+
     # Use int to prevent overflow
     output = np.zeros(max_segment_length, dtype=int)
 

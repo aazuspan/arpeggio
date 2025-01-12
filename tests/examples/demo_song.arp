@@ -1,0 +1,67 @@
+@key d_dorian
+@bpm 160
+
+~ Chords
+track
+    @chords
+    @octave -1
+
+    1 . . . . . . . 6 . . . . . . . 4 . . . . . . . 5 . . . . . . . [x4]
+    1 . . . . . . .
+end
+
+~ Bass
+track
+    @instrument triangle
+    @octave -2
+
+    1 . . . 1 . . . 6 . . . . . . . 4 . . . . . . . 5 . . . 3 . 2 . [x4]
+    1 . . . . . . .
+end
+
+~ Snare
+track
+    @instrument noise
+    @staccato
+    @volume -16
+
+    1 & 1 & . . 1 & 1 & 1 1 1 1 & . 1 & 1 & 1 & 1 & 1 . . . 1 1 1 1 [x2]
+    1 & 1 & 1 1 1 & 1 & 1 1 1 1 & . 1 & 1 & 1 & 1 & 1 1 1 1 1 1 1 1 [x2]
+    1 . . .
+end
+
+
+~ Snare accent
+track
+    @instrument noise
+    @staccato
+    @volume -8
+
+    1 & . . . . . .  1 & . . . . . .  [x8]
+end
+
+
+~ Melody 1
+track
+    @instrument sine
+    @pan 1
+
+    1 . . . . . . . 1 . 2 . 3 . . . . . 5 . 4 . 3 . 4 . 3 . 7-. 2 .
+    1 . . . . . . . 1 . 2 . 3 . . . . . 7-. 1 . 2 . 5 . 6 . 3 . 2 .
+    1 . . . . . . . 1 . 2 . 3 . . . . . 5 . 4 . 3 . 4 . 3 . 7-. 2 .
+    1 . . . . . . . 1 . 2 . 3 . . . . . 7-. 1 . 2 . 5 . 6 . 3 . 2 .
+end
+
+
+~ Melody 2
+track
+    @instrument sine
+    @volume -8
+    @pan -1
+    @offset 64
+
+    1 . . . 7 . . . . . . . 1+. 7 . 5 . 6 . . . 4 . 5 . 4 . 3 . 2 .
+    1 . . . 7 . . . . . . . 1+. 5 . 4 . 3 . . . 4 . 3 . 2 . 5-. 7-.
+    3 . . . . . . .
+end
+

@@ -34,6 +34,9 @@ class Track:
     chords: bool = False
     """If true, play chords instead of single notes."""
 
+    staccato: bool = False
+    """If true, notes are held for half their duration."""
+
     mute: bool = False
     """If true, mute the track when rendering the song."""
 
@@ -42,6 +45,12 @@ class Track:
 
     loop: int = 1
     """The number of times to loop the track."""
+
+    offset: int = 0
+    """
+    The number of 16th notes to delay this track's start. The offset is applied after
+    any looping.
+    """
 
     def __post_init__(self):
         if self.volume > 0.0:
@@ -52,6 +61,9 @@ class Track:
 
         if self.loop < 1:
             raise ValueError("Loop must be greater than 0.")
+
+        if self.offset < 0:
+            raise ValueError("Offset must be positive.")
 
     def __len__(self) -> int:
         """Length of the track in milliseconds."""
@@ -71,7 +83,12 @@ class Track:
         else:
             playable = self.song.key.note(interval, octave + self.octave)
 
-        self._add_to_timeline(playable, duration=duration)
+        if self.staccato:
+            self._add_to_timeline(playable, duration=duration / 2)
+            self.rest(duration=duration / 2)
+        else:
+            self._add_to_timeline(playable, duration=duration)
+
         return playable
 
     def rest(self, *, duration: Duration) -> None:
@@ -92,7 +109,12 @@ class Track:
 
     def render(self) -> AudioSegment:
         """Render the track to an audio segment."""
-        if self.loop > 1:
-            return self._segment * self.loop
+        segment = self._segment * self.loop if self.loop > 1 else self._segment
 
-        return self._segment
+        if self.offset > 0:
+            # Add silence to the beginning of the track
+            offset_ms = Duration(self.offset, 16).to_millis(self.song.bpm)
+            offset_segment = self.instrument(None, duration=offset_ms)
+            segment = offset_segment + segment
+
+        return segment

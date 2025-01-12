@@ -37,6 +37,7 @@ end
 track
     @instrument noise
     @volume -15
+    @staccato
 
     1 & 1 . & & 1 & [x4]
 
