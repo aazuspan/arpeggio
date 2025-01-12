@@ -1,18 +1,16 @@
-song: _EOL* config_dict tracks
+song: config_dict tracks
 
 config_dict: config*
-config: "@" key value? _EOL
+config: "@" key value?
 key: WORD
 value: NOTE_NAME | WORD | SIGNED_NUMBER
 NOTE_NAME: LETTER+ (ACCIDENTAL | LETTER | "_")*
 ACCIDENTAL: "#" | "b"
 
 tracks: track* -> as_list
-track: _track_start config_dict lines _track_end
-_track_start: "track" _EOL+
-_track_end: "end" _EOL*
+track: "track" config_dict lines "end"
 lines: line*    -> as_list
-line: symbols repeat? _EOL+
+line: "|" symbols repeat?
 symbols: (interval | continue | rest)+ -> as_list
 interval: (INT octave?)
 !octave: "+" | "-" | "*" | "_"
@@ -20,12 +18,11 @@ repeat: "[x" INT "]"
 continue: "."
 rest: "&"
 
-COMMENT: "~" /[^\n]*/ _EOL
+COMMENT: "~" /[^\n]*/
 %import common.INT
 %import common.SIGNED_NUMBER
-%import common.WS_INLINE
-%import common.NEWLINE -> _EOL
+%import common.WS
 %import common.LETTER
 %import common.WORD
 %ignore COMMENT
-%ignore WS_INLINE
+%ignore WS

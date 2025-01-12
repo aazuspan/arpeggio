@@ -43,7 +43,7 @@ def test_interpret_empty_songs(source):
 def test_interpret_empty_track():
     """An empty track should interpret as silence."""
     empty_track = "track\n@instrument sine\nend"
-    nonempty_track = "track\n1 2 3 4\nend"
+    nonempty_track = "track\n| 1 2 3 4\nend"
     source = "\n".join([nonempty_track, empty_track])
 
     parser = arpeggio.parser.Parser()
