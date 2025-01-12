@@ -1,0 +1,31 @@
+~ Only Murders in the Building Theme by Siddhartha Khosla
+~ This song demonstrates how you can compose non 4/4 songs
+~ just by aligning notes correctly.
+
+@bpm 60
+@key c_major
+
+~ Bass notes
+track
+    @staccato
+
+    | 2 . . 2 . . 1 . . 5-. . [x2]
+    | 2 . .
+end
+
+~ Chords
+track
+    @chords
+    @staccato
+
+    | & 2 2 & 2 2 & 1 1 & 5-5-[x2]
+end
+
+~ Melody
+track
+    @instrument triangle
+
+    | 2 . 3 4 . 6 5 . . 4 . 3
+    | 2 . . . . 4 3 . . 2 . 1
+    | 2 . .
+end
