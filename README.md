@@ -34,7 +34,7 @@ The octave of a note can be modified by following it with an **octave modifier**
     | 1_. . . 1-. . . 1+. . . 1*. . .
 ```
 
-#### Repeats
+#### Lines and Repeats
 
 Lines can be repeated by placing a **repeat modifier** at the end. The following plays a descending C major scale four times:
 
@@ -42,11 +42,13 @@ Lines can be repeated by placing a **repeat modifier** at the end. The following
     | 1+. 7 . 6 . 5 . 4 . 3 . 2 . 1 . [x4]
 ```
 
+Lines can be any length. For readability, it usually makes sense to split lines at the end of the measure, and to make all lines the same length so that notes line up vertically.
+
 The key and tempo of a song are adjustable through [configuration options](#configuration). Time signatures in Arpeggio are defined only by how the user arranges beats; there's no built-in concept of a measure.
 
 ### Syntax
 
-Arpeggio programs have a top-level global scope where song configuration is defined and zero or more track blocks are created. For example:
+Arpeggio programs have a top-level global scope where song configuration is defined track blocks are created. For example:
 
 ```
 @bpm 90
@@ -58,7 +60,7 @@ end
 
 `@bpm 90` marks a song-level configuration option named `bpm` with a value `90`, which sets the tempo of the song. 
 
-Everything between `track` and `end` is a **track block**. A track block can include track-level configuration and zero or more lines of notes. Lines begin with a `|` and contain notes as integer intervals or rests `&`. Notes can be followed by modifiers like `+` or continue `.` symbols. Lines can optionally end with a repeat symbol `[xN]`, where N is the number of times to repeat the line.
+Everything between `track` and `end` is a **track block**. A track block can include track-level configuration and lines of notes. Lines begin with a `|` and contain notes as integer intervals or rests `&`. Notes can be followed by modifiers like `+` or continue `.` symbols. Lines can optionally end with a repeat symbol `[xN]`, where N is the number of times to repeat the line.
 
 Comments begin with a `~` and are ignored by the parser. Whitespace is used for aesthetics and lining up notes, but is ignored by the parser. 
 
@@ -71,7 +73,6 @@ Here's a valid program that uses all of these syntax features:
 track
     @instrument triangle
 
-    ~ Down melody
     | 3+2+1+. 6 & 5 . [x3]
     | 3 . 2 . . . 1 .
 end
@@ -81,7 +82,6 @@ end
 track
     @chords
 
-    ~ Down melody
     | & & 1 & & & 1 & [x3]
     | & & 2 . . . 1 &
 end
@@ -127,13 +127,13 @@ Arpeggio uses [simpleaudio](https://simpleaudio.readthedocs.io/en/latest/index.h
 
 ### Usage
 
-Run `arpeggio --help` for a list of available commands. The interpreter can play a song from an Arpeggio file with:
+Run `arpeggio --help` for a list of available commands. The interpreter can play a song from an `arp` file with:
 
 ```bash
 arpeggio play song.arp
 ```
 
-Render a song to WAV with:
+Compile a song to WAV with:
 
 ```bash
 arpeggio compile song.arp song.wav
