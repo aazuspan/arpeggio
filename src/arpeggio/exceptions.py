@@ -7,8 +7,8 @@ class SourceError(Exception):
         self.meta = meta
 
     def __str__(self):
-        # TODO: Report the filename of the parsed program
-        return f"line {self.meta.line}, column {self.meta.column}: {self.message}"
+        loc = f"{self.meta.filename}, line {self.meta.line}, column {self.meta.column}"
+        return f"{loc}: {self.message}"
 
 
 class ConfigError(SourceError):

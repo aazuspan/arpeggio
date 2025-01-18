@@ -18,7 +18,9 @@ class Parser:
             propagate_positions=True,
         )
 
-    def parser_error(self, e: UnexpectedToken | UnexpectedCharacters):
+    def parser_error(
+        self, e: UnexpectedToken | UnexpectedCharacters, filename: str
+    ) -> None:
         if isinstance(e, UnexpectedToken):
             got = str(e.token)
             unexpected_type = "token"
@@ -30,11 +32,14 @@ class Parser:
         meta = Meta()
         meta.line = e.line
         meta.column = e.column
+        meta.filename = filename
         raise ParserError(msg, meta)
 
-    def parse(self, source: str) -> ast.Song:
+    def parse(self, source: str, filename: str = "<stdin>") -> ast.Song:
         """Parse an Arpeggio program and return the AST."""
         source += "\n"
 
-        self.tree = self.parser.parse(source, on_error=self.parser_error)
+        self.tree = self.parser.parse(
+            source, on_error=lambda e: self.parser_error(e, filename)
+        )
         return self.transformer.transform(self.tree)

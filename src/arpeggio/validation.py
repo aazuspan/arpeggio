@@ -10,7 +10,7 @@ class ValidatedConfig(BaseModel):
     model_config = ConfigDict(extra="forbid", arbitrary_types_allowed=True)
 
     @classmethod
-    def validate(cls, configs: dict[str, Config], **kwargs):
+    def validate(cls, configs: dict[str, Config], filename: str, **kwargs):
         """
         Instantiate a validated configuration using parsed configuration options.
 
@@ -33,4 +33,5 @@ class ValidatedConfig(BaseModel):
             else:
                 msg = f"Invalid @{invalid_config} configuration. " + error["msg"]
 
-            raise ConfigError(msg, configs[invalid_config].meta) from None
+            configs[invalid_config].meta.filename = filename
+            raise ConfigError(msg, meta=configs[invalid_config].meta) from None

@@ -7,8 +7,8 @@ DEFAULT_KEY = "C_major"
 DEFAULT_INSTRUMENT = "sine"
 
 
-def interpret(parsed: ast.Song) -> engine.Song:
-    song = engine.Song.validate(parsed.config)
+def interpret(parsed: ast.Song, filename: str = "<stdin>") -> engine.Song:
+    song = engine.Song.validate(parsed.config, filename=filename)
 
     for parsed_track in parsed.tracks:
         track = engine.Track.validate(
@@ -16,6 +16,7 @@ def interpret(parsed: ast.Song) -> engine.Song:
             sample_rate=song.sample_rate,
             key=song.key,
             bpm=song.bpm,
+            filename=filename,
         )
         song.tracks.append(track)
 

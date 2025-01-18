@@ -1,4 +1,7 @@
+import pytest
+
 import arpeggio
+from arpeggio.exceptions import ParserError
 
 
 def test_parse_valid_program():
@@ -44,3 +47,18 @@ def test_parse_whitespace():
     """
     parser = arpeggio.parser.Parser()
     parser.parse(prog)
+
+
+def test_parser_error():
+    invalid_prog = """
+    track
+        @instrument sine
+
+        1 2 3 4
+    end
+    """
+
+    parser = arpeggio.parser.Parser()
+    msg = "<stdin>, line 5, column 9: Unexpected token '1'"
+    with pytest.raises(ParserError, match=msg):
+        parser.parse(invalid_prog)

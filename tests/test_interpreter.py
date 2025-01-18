@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 import arpeggio
+from arpeggio.exceptions import ConfigError
 
 from .conftest import EXAMPLE_SONGS
 
@@ -49,3 +50,24 @@ def test_interpret_empty_track():
     ast = parser.parse(source)
     song = arpeggio.interpreter.interpret(ast)
     assert song.render()
+
+
+def test_invalid_config_errors():
+    """Test that invalid configurations raises errors."""
+    parser = arpeggio.parser.Parser()
+
+    parsed = parser.parse("@key 120")
+    with pytest.raises(ConfigError, match="Invalid @key"):
+        arpeggio.interpreter.interpret(parsed)
+
+    parsed = parser.parse("@fadsf")
+    with pytest.raises(ConfigError, match="Unrecognized configuration @fadsf"):
+        arpeggio.interpreter.interpret(parsed)
+
+    parsed = parser.parse("track\n@instrument cowbell\nend")
+    with pytest.raises(ConfigError, match="Invalid @instrument"):
+        arpeggio.interpreter.interpret(parsed)
+
+    parsed = parser.parse("track\n@stuff\nend")
+    with pytest.raises(ConfigError, match="Unrecognized configuration @stuff"):
+        arpeggio.interpreter.interpret(parsed)

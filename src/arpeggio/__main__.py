@@ -85,8 +85,8 @@ def _render_file(path: str, output: str | None = None):
         source = f.read()
 
     try:
-        ast = Parser().parse(source)
-        song = interpret(ast)
+        ast = Parser().parse(source, filename=path)
+        song = interpret(ast, filename=path)
     except SourceError as e:
         print(e)
         return
