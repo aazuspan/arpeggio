@@ -24,11 +24,12 @@ def test_parse_valid_program():
     """
     parser = arpeggio.parser.Parser()
     song = parser.parse(prog)
-    assert song.config == {"bpm": 120, "key": "C#_Major"}
+    assert song.config["bpm"].value == 120
+    assert song.config["key"].value == "C#_Major"
     assert len(song.tracks) == 2
 
     track = song.tracks[0]
-    assert track.config == {"instrument": "sine"}
+    assert track.config["instrument"].value == "sine"
     assert len(track.lines) == 3
     assert len(track.lines[1]) == 5 * 3
 

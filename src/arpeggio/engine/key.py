@@ -50,9 +50,10 @@ class Key:
         )
 
     @classmethod
-    def from_name(cls, note: str, mode: str) -> Key:
+    def from_name(cls, name: str) -> Key:
         """Return the key with the given name."""
-        return cls(get_note(note), get_mode(mode))
+        tonic, mode = name.split("_")
+        return cls(get_note(tonic), get_mode(mode))
 
 
 modes = {

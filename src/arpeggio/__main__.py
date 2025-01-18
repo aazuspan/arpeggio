@@ -5,8 +5,9 @@ from collections.abc import Callable
 from watchdog.events import FileModifiedEvent, FileSystemEventHandler
 from watchdog.observers import Observer
 
-from arpeggio.interpreter import InterpreterError, interpret
-from arpeggio.parser import Parser, ParsingError
+from arpeggio.exceptions import SourceError
+from arpeggio.interpreter import interpret
+from arpeggio.parser import Parser
 
 
 def _parse_play(command_parser) -> argparse.ArgumentParser:
@@ -84,9 +85,9 @@ def _render_file(path: str, output: str | None = None):
         source = f.read()
 
     try:
-        ast = Parser().parse(source, wrap_errors=True)
+        ast = Parser().parse(source)
         song = interpret(ast)
-    except (ParsingError, InterpreterError) as e:
+    except SourceError as e:
         print(e)
         return
 

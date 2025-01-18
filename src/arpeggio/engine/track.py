@@ -2,30 +2,37 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from functools import cached_property
 
+from pydantic import (
+    Field,
+    NonNegativeInt,
+    NonPositiveFloat,
+    PositiveInt,
+    PrivateAttr,
+    field_validator,
+)
+from pydantic_core import PydanticCustomError
 from pydub import AudioSegment
 
-from arpeggio.engine.instrument import Instrument
+from arpeggio.engine import Key
+from arpeggio.engine.instrument import Instrument, get_instrument
 from arpeggio.engine.note import Chord, Duration, Note
-
-if TYPE_CHECKING:
-    from .song import Song
+from arpeggio.validation import ValidatedConfig
 
 
-@dataclass
-class Track:
+class Track(ValidatedConfig):
     """A track that arranges and renders individual sounds."""
 
-    instrument: Instrument
-    song: Song
-    _segment: AudioSegment = field(default_factory=AudioSegment.empty)
+    instrument_type: type[Instrument] = Field(
+        default="sine", alias="instrument", validate_default=True
+    )
+    """The type of instrument generator."""
 
-    volume: float = 0.0
+    volume: NonPositiveFloat = 0.0
     """The volume of the track, in decibels between -infinity and 0."""
 
-    pan: float = 0.0
+    pan: float = Field(0.0, ge=-1.0, le=1.0)
     """The stereo panning of the track, between -1 (left) and 1 (right)."""
 
     octave: int = 0
@@ -43,27 +50,37 @@ class Track:
     solo: bool = False
     """If true, only play this track when rendering the song."""
 
-    loop: int = 1
+    loop: PositiveInt = 1
     """The number of times to loop the track."""
 
-    offset: int = 0
-    """
-    The number of 16th notes to delay this track's start. The offset is applied after
-    any looping.
-    """
+    offset: NonNegativeInt = 0
+    """The number of 16th notes to delay this track's start."""
 
-    def __post_init__(self):
-        if self.volume > 0.0:
-            raise ValueError("Volume must be less than 0.0.")
+    sample_rate: PositiveInt
+    """The sample rate of the song."""
 
-        if not -1 <= self.pan <= 1:
-            raise ValueError("Pan must be between -1 and 1.")
+    key: Key
+    """The key of the song."""
 
-        if self.loop < 1:
-            raise ValueError("Loop must be greater than 0.")
+    bpm: PositiveInt
+    """The tempo of the song in beats per minute."""
 
-        if self.offset < 0:
-            raise ValueError("Offset must be positive.")
+    _segment: AudioSegment = PrivateAttr(default_factory=AudioSegment.empty)
+
+    @field_validator("instrument_type", mode="before")
+    def validate_instrument(cls, v: str):
+        try:
+            return get_instrument(v)
+        except Exception:
+            raise PydanticCustomError(
+                "invalid_instrument",
+                "Instrument `{instrument_name}` not found.",
+                dict(instrument_name=v),
+            ) from None
+
+    @cached_property
+    def instrument(self) -> Instrument:
+        return self.instrument_type(sample_rate=self.sample_rate)
 
     def __len__(self) -> int:
         """Length of the track in milliseconds."""
@@ -79,9 +96,9 @@ class Track:
         """Add a note or chord to the track's timeline."""
         playable: Note | Chord
         if self.chords:
-            playable = self.song.key.chord(interval, octave + self.octave)
+            playable = self.key.chord(interval, octave + self.octave)
         else:
-            playable = self.song.key.note(interval, octave + self.octave)
+            playable = self.key.note(interval, octave + self.octave)
 
         if self.staccato:
             self._add_to_timeline(playable, duration=duration / 2)
@@ -98,7 +115,7 @@ class Track:
     def _add_to_timeline(
         self, playable: Note | Chord | None, *, duration: Duration
     ) -> None:
-        duration_ms = duration.to_millis(self.song.bpm)
+        duration_ms = duration.to_millis(self.bpm)
         # Concatenating segments like this compounds rounding errors in note length,
         # but it's 10x faster than the alternative of calculating and overlaying notes
         # at correct positions. The total accumulated error with 32nd notes over 4
@@ -113,7 +130,7 @@ class Track:
 
         if self.offset > 0:
             # Add silence to the beginning of the track
-            offset_ms = Duration(self.offset, 16).to_millis(self.song.bpm)
+            offset_ms = Duration(self.offset, 16).to_millis(self.bpm)
             offset_segment = self.instrument(None, duration=offset_ms)
             segment = offset_segment + segment
 

@@ -34,7 +34,6 @@ def test_interpret_empty_songs(source):
     ast = parser.parse(source)
     song = arpeggio.interpreter.interpret(ast)
 
-    assert not parser.diagnostics
     assert ast.config == {}
     assert ast.tracks == []
     assert not song.render()
@@ -49,5 +48,4 @@ def test_interpret_empty_track():
     parser = arpeggio.parser.Parser()
     ast = parser.parse(source)
     song = arpeggio.interpreter.interpret(ast)
-    assert not parser.diagnostics
     assert song.render()

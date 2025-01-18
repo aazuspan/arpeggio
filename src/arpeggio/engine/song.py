@@ -2,24 +2,45 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-
+from pydantic import Field, PositiveInt, field_validator
+from pydantic_core import PydanticCustomError
 from pydub import AudioSegment
 from pydub.playback import play
 
 from arpeggio.engine.audio import normalized_overlay
-from arpeggio.engine.instrument import Instrument
 from arpeggio.engine.key import Key
 from arpeggio.engine.track import Track
+from arpeggio.validation import ValidatedConfig
 
 
-@dataclass
-class Song:
-    key: Key
-    bpm: int = 120
-    sample_rate: int = 11_025
-    tracks: list[Track] = field(default_factory=list)
-    loop: int = 1
+class Song(ValidatedConfig):
+    """The base component of a parsed program."""
+
+    key: Key = Field(default="C_major", validate_default=True)
+    """The musical key."""
+
+    bpm: PositiveInt = 120
+    """Tempo in beats per minute."""
+
+    sample_rate: PositiveInt = 11_025
+    """The sampling rate of rendered audio."""
+
+    tracks: list[Track] = Field(default_factory=list)
+    """The tracks that comprise the song."""
+
+    loop: PositiveInt = 1
+    """The number of times to loop the song."""
+
+    @field_validator("key", mode="before")
+    def validate_key(cls, v: str):
+        try:
+            return Key.from_name(v)
+        except Exception:
+            raise PydanticCustomError(
+                "invalid_key",
+                "Key should be in the form `tonic_mode`. Got `{key_name}`.",
+                dict(key_name=v),
+            ) from None
 
     def __len__(self) -> int:
         """Length of the song in milliseconds."""
@@ -39,11 +60,3 @@ class Song:
     def play(self):
         """Play the song."""
         play(self.render())
-
-    def add_track(self, instrument: type[Instrument], **kwargs) -> Track:
-        """Create a new track with the given instrument."""
-        track = Track(
-            instrument=instrument(sample_rate=self.sample_rate), song=self, **kwargs
-        )
-        self.tracks.append(track)
-        return track
