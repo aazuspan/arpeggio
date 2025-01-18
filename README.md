@@ -48,7 +48,7 @@ The key and tempo of a song are adjustable through [configuration options](#conf
 
 ### Syntax
 
-Arpeggio programs have a top-level global scope where song configuration is defined track blocks are created. For example:
+Arpeggio programs have a top-level global scope where song configuration is defined and track blocks are created. For example:
 
 ```
 @bpm 90
@@ -58,7 +58,7 @@ track
 end
 ```
 
-`@bpm 90` marks a song-level configuration option named `bpm` with a value `90`, which sets the tempo of the song. 
+`@bpm 90` defines a song-level configuration option named `bpm` with a value `90`, which sets the tempo of the song. 
 
 Everything between `track` and `end` is a **track block**. A track block can include track-level configuration and lines of notes. Lines begin with a `|` and contain notes as integer intervals or rests `&`. Notes can be followed by modifiers like `+` or continue `.` symbols. Lines can optionally end with a repeat symbol `[xN]`, where N is the number of times to repeat the line.
 
@@ -86,6 +86,8 @@ track
     | & & 2 . . . 1 &
 end
 ```
+
+You can see other example songs [here](https://github.com/aazuspan/arpeggio/tree/main/tests/examples).
 
 ### Configuration
 
