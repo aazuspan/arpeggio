@@ -12,12 +12,12 @@ track: "track" config_dict lines "end"
 lines: line*    -> as_list
 line: "|" symbols repeat?
 symbols: (interval | continue | rest)+ -> as_list
-interval: (INT octave?)
-!octave: "+" | "-" | "*" | "_"
+interval: (INT OCTAVE?)
 repeat: "[x" INT "]"
 continue: "."
 rest: "&"
 
+OCTAVE: "+" | "-" | "*" | "_"
 COMMENT: "~" /[^\n]*/
 %import common.INT
 %import common.SIGNED_NUMBER

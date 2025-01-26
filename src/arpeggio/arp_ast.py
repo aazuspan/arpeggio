@@ -53,16 +53,6 @@ class _ToAst(Transformer):
     as_list = list
 
     @v_args(inline=True)
-    def octave(self, v):
-        modifiers = {
-            "_": -2,
-            "-": -1,
-            "+": 1,
-            "*": 2,
-        }
-        return modifiers[v]
-
-    @v_args(inline=True)
     def key(self, k):
         return k
 
@@ -102,11 +92,19 @@ class _ToAst(Transformer):
 
         return config
 
-    @v_args(inline=True)
     def SIGNED_NUMBER(self, n) -> int | float:
         if "." in n:
             return float(n)
         return int(n)
+
+    def OCTAVE(self, v):
+        modifiers = {
+            "_": -2,
+            "-": -1,
+            "+": 1,
+            "*": 2,
+        }
+        return modifiers[v]
 
     INT = int
     WORD = NOTE_NAME = str
