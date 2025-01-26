@@ -1,10 +1,16 @@
 # Arpeggio
 
-A toy domain-specific language and interpreter for music synthesis.
+A toy domain-specific language and interpreter for composing and synthesizing music.
 
 ## Demo
 
+The code below compiles to the following audio:
+
+https://github.com/user-attachments/assets/fb784b06-90b3-4c15-a825-e9ee3dff7fad
+
 ```
+~ Demo Song
+
 @key d_dorian
 @bpm 160
 
